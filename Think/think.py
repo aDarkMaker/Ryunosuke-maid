@@ -1,8 +1,12 @@
+import os
 import requests
 import configparser
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(current_dir, 'Config.conf')
+
 config = configparser.ConfigParser()
-config.read('.\Think\Config.conf', encoding='utf-8')
+config.read(config_path, encoding='utf-8')
 api_key = config.get('deepseek', 'api_key', fallback='')
 persona = config.get('persona', 'description', fallback='')
 
@@ -24,7 +28,3 @@ def generate_reply(user_text):
         return resp.json()['choices'][0]['message']['content']
     else:
         return f"api_Error: {resp.status_code}"
-
-if __name__ == "__main__":
-    # 测试
-    print(generate_reply("你好，你是谁？"))

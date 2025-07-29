@@ -2,6 +2,10 @@ import sounddevice as sd
 import numpy as np
 from funasr import AutoModel
 import time
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(current_dir, 'model')
 
 # 语音活动检测参数
 VAD_THRESHOLD = 0.03  # 声音检测阈值 (根据环境调整)
@@ -13,10 +17,11 @@ encoder_chunk_look_back = 4
 decoder_chunk_look_back = 1
 
 model = AutoModel(
-    model="./ASR/model",
-    trust_remote_code=True,
-    device="cpu"
+    model=model_path,
+    device="cpu",
+    disable_update=True
 )
+
 
 sample_rate = 16000
 chunk_stride = chunk_size[1] * 3840  # 每块采样点数
@@ -34,8 +39,7 @@ def calculate_volume(audio_data):
 def process_audio_buffer(is_final=False):
     if not audio_buffer:
         return
-    
-    # 拼接缓冲区中的音频
+
     full_audio = np.concatenate(audio_buffer)
     
     # 调用ASR模型
@@ -48,17 +52,13 @@ def process_audio_buffer(is_final=False):
         decoder_chunk_look_back=decoder_chunk_look_back
     )
     
-    # 处理并输出结果
     if is_final:
         print("\nfinal:", res)
         with open("log.log", "a", encoding="utf-8") as f:
             f.write(f"[FINAL] {time.ctime()}: {res}\n")
     else:
         print("part:", res)
-        with open("log.log", "a", encoding="utf-8") as f:
-            f.write(f"[PARTIAL] {time.ctime()}: {res}\n")
     
-    # 如果是最终结果，清空缓冲区
     if is_final:
         audio_buffer.clear()
 
@@ -79,11 +79,9 @@ def callback(indata, frames, time_info, status):
         if not is_speaking:
             print("\一有动静...")
             is_speaking = True
-        
-        # 将音频添加到缓冲区
+
         audio_buffer.append(speech_chunk.copy())
-        
-        # 处理当前音频（流式模式）
+
         process_audio_buffer(is_final=False)
     
     # 检查是否说话结束
@@ -92,12 +90,10 @@ def callback(indata, frames, time_info, status):
         if silence_time > SILENCE_DURATION:
             print("Over~")
             is_speaking = False
-            
-            # 处理最终结果
+
             if audio_buffer:
                 process_audio_buffer(is_final=True)
 
-# 主录音循环
 try:
     with sd.InputStream(samplerate=sample_rate, channels=1, 
                         blocksize=chunk_stride, callback=callback):
