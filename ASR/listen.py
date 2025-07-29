@@ -28,12 +28,10 @@ audio_buffer = []
 cache = {}
 
 def calculate_volume(audio_data):
-    """计算音频片段的音量水平"""
     rms = np.sqrt(np.mean(audio_data**2))
     return rms
 
 def process_audio_buffer(is_final=False):
-    """处理缓冲区中的音频数据"""
     if not audio_buffer:
         return
     
