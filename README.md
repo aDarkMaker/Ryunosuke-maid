@@ -16,7 +16,7 @@
 
 ### ASR——FunASR
 
-### TTS——
+### TTS——Kokoro
 
 ### MCP——工具包
 
