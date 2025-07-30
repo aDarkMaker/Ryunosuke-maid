@@ -3,6 +3,8 @@ import numpy as np
 from funasr import AutoModel
 import time
 import os
+from Think.think import generate_reply
+from .control import system_state
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(current_dir, 'model')
@@ -54,6 +56,7 @@ def process_audio_buffer(is_final=False):
     
     if is_final:
         print("\nfinal:", res)
+        generate_reply(res)
         with open("log.log", "a", encoding="utf-8") as f:
             f.write(f"[FINAL] {time.ctime()}: {res}\n")
     else:
@@ -65,6 +68,8 @@ def process_audio_buffer(is_final=False):
 def callback(indata, frames, time_info, status):
     global is_speaking, last_sound_time
     
+    if not system_state.is_listening_active():
+        return
     # 提取单声道音频
     speech_chunk = indata[:, 0]
     
@@ -93,15 +98,16 @@ def callback(indata, frames, time_info, status):
 
             if audio_buffer:
                 process_audio_buffer(is_final=True)
+                
 
-try:
-    with sd.InputStream(samplerate=sample_rate, channels=1, 
-                        blocksize=chunk_stride, callback=callback):
-        print("I am listening...")
-        
-        while True:
-            sd.sleep(1000)
-except KeyboardInterrupt:
-    print("\nStoppy！")
-except Exception as e:
-    print(f"Error: {str(e)}")
+def start_listening():
+    try:
+        with sd.InputStream(samplerate=sample_rate, channels=1, 
+                            blocksize=chunk_stride, callback=callback):
+            print("I am listening...")
+            while True:
+                sd.sleep(1000)
+    except KeyboardInterrupt:
+        print("\nStoppy!")
+    except Exception as e:
+        print(f"Error: {str(e)}")
