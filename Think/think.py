@@ -1,4 +1,5 @@
 import os
+import time
 import requests
 import configparser
 from Speak.speak import speak
@@ -23,6 +24,8 @@ def generate_reply(user_text):
     
     if user_text.startswith('帮我'):
         if "关机" in user_text :
+            speak("帮你了哦，下次记得自己关！")
+            time.sleep(3000)
             mcp_tools['ShutDown']()
     
     url = "https://api.deepseek.com/v1/chat/completions"
