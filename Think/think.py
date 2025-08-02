@@ -3,6 +3,7 @@ import requests
 import configparser
 from Speak.speak import speak
 from ASR.control import system_state
+from MCP import load_tools
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 config_path = os.path.join(current_dir, 'Config.conf')
@@ -12,16 +13,23 @@ config.read(config_path, encoding='utf-8')
 api_key = config.get('deepseek', 'api_key', fallback='')
 persona = config.get('persona', 'description', fallback='')
 
+mcp_tools = load_tools()
+
 def generate_reply(user_text):
     print(f"User: {user_text}")
+    
+    if isinstance(user_text, list):
+        user_text = user_text[0]['text'] if user_text else ""
+    
+    if user_text.startswith('帮我'):
+        if "关机" in user_text :
+            mcp_tools['ShutDown']()
+    
     url = "https://api.deepseek.com/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
-    
-    if isinstance(user_text, list):
-        user_text = user_text[0]['text'] if user_text else ""
     
     data = {
         "model": "deepseek-chat",
@@ -54,10 +62,6 @@ def generate_reply(user_text):
         Response: {getattr(resp, 'text', 'No response')[:500]}
         """
         print(error_details)
-        
-        with open("api_errors.log", "a", encoding="utf-8") as f:
-            f.write(f"[{time.ctime()}] {error_details}\n")
-        
         return error_msg
     
     
