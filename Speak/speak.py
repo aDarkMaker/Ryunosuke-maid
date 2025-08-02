@@ -22,11 +22,7 @@ def speak(text, voice='af_heart', speed=1):
         print(f"生成语音段 {i}: {gs}")
         audio_chunks.append(audio)
     
-    # 合并所有音频片段
     full_audio = np.concatenate(audio_chunks)
-    
-    # 直接播放音频
-    print("播放语音...")
+
     sd.play(full_audio, samplerate=24000)
-    sd.wait()  # 等待播放完成
-    print("播放结束")
+    sd.wait()

@@ -5,6 +5,7 @@ import configparser
 from Speak.speak import speak
 from ASR.control import system_state
 from MCP import load_tools
+import re
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 config_path = os.path.join(current_dir, 'Config.conf')
@@ -16,17 +17,24 @@ persona = config.get('persona', 'description', fallback='')
 
 mcp_tools = load_tools()
 
+def clean_speech_text(text):
+    return re.sub(r'<\|.*?\|>', '', text).strip()
+
 def generate_reply(user_text):
-    print(f"User: {user_text}")
-    
     if isinstance(user_text, list):
         user_text = user_text[0]['text'] if user_text else ""
+        user_text = clean_speech_text(user_text)
+        print(f"User: {user_text}")
     
     if user_text.startswith('帮我'):
         if "关机" in user_text :
             speak("帮你了哦，下次记得自己关！")
-            time.sleep(3000)
-            mcp_tools['ShutDown']()
+            if 'ShutDown' in mcp_tools:
+                print("执行关机指令...")
+                mcp_tools['ShutDown']()
+                return "关机指令已执行"
+            else:
+                return "未找到关机工具"
     
     url = "https://api.deepseek.com/v1/chat/completions"
     headers = {

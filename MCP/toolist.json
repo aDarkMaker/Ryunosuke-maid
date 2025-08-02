@@ -2,6 +2,7 @@
     "tools": [
         {
             "name": "ShutDown",
+            "type": "nodejs",
             "description": "电脑关机",
             "parameters": {}
         }
