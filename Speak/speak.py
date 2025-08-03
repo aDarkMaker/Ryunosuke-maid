@@ -1,6 +1,7 @@
 from kokoro import KPipeline
 import sounddevice as sd
 import numpy as np
+import torch
 # 🇺🇸 'a' => American English, 🇬🇧 'b' => British English
 # 🇪🇸 'e' => Spanish es
 # 🇫🇷 'f' => French fr-fr
@@ -10,10 +11,11 @@ import numpy as np
 # 🇧🇷 'p' => Brazilian Portuguese pt-br
 # 🇨🇳 'z' => Mandarin Chinese: pip install misaki[zh]
 pipeline = KPipeline(lang_code='z', repo_id='hexgrad/Kokoro-82M') # <= make sure lang_code matches voice, reference above.
+voice_tensor = torch.load('.\Speak\model\yln\yln.pt', weights_only=True, map_location=torch.device('cpu')) # Training!
 
-def speak(text, voice='af_heart', speed=1):
+def speak(text, speed=1):
     generator = pipeline(
-        text, voice=voice,
+        text, voice=voice_tensor,
         speed=speed, split_pattern=r'\n+'
     )
     

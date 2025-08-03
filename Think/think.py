@@ -28,7 +28,7 @@ def generate_reply(user_text):
     
     if user_text.startswith('帮我'):
         if "关机" in user_text :
-            speak("帮你了哦，下次记得自己关！")
+            speak("帮你了哦，下次记得自己关，不要什么事情都麻烦我！")
             if 'ShutDown' in mcp_tools:
                 print("执行关机指令...")
                 mcp_tools['ShutDown']()
