@@ -8,18 +8,18 @@ def load_tools():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     mcp_dir = os.path.join(project_root, 'MCP')
     
-    print(f"[MCP] 工具目录: {mcp_dir}")
+    print(f"[MCP] Tool directory: {mcp_dir}")
 
     toolist_path = os.path.join(mcp_dir, 'toolist.json')
     if not os.path.exists(toolist_path):
-        print(f"[MCP] 警告: 未找到工具清单 {toolist_path}")
+        print(f"[MCP] Warning: Tool list not found {toolist_path}")
         return tools
         
-    print(f"[MCP] 找到工具清单: {toolist_path}")
+    print(f"[MCP] Found tool list: {toolist_path}")
     with open(toolist_path, 'r', encoding='utf-8') as f:
         toolist = json.load(f)
     
-    print(f"[MCP] 加载工具: {[t['name'] for t in toolist.get('tools', [])]}")
+    print(f"[MCP] Loading tools: {[t['name'] for t in toolist.get('tools', [])]}")
     
     for tool in toolist.get('tools', []):
         tool_name = tool['name']
@@ -28,25 +28,25 @@ def load_tools():
         if tool_type == 'python':
             module_path = os.path.join(mcp_dir, f"{tool_name}.py")
             if os.path.exists(module_path):
-                print(f"[MCP] 加载Python工具: {module_path}")
+                print(f"[MCP] Loading Python tool: {module_path}")
                 try:
                     spec = importlib.util.spec_from_file_location(tool_name, module_path)
                     module = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(module)
                     tools[tool_name] = getattr(module, tool_name)
-                    print(f"[MCP] 成功加载Python工具: {tool_name}")
+                    print(f"[MCP] Successfully loaded Python tool: {tool_name}")
                 except Exception as e:
-                    print(f"[MCP] 加载Python工具失败: {str(e)}")
+                    print(f"[MCP] Failed to load Python tool: {str(e)}")
             else:
-                print(f"[MCP] 错误: 未找到Python工具 {tool_name} 的实现文件")
+                print(f"[MCP] Error: Implementation file for Python tool {tool_name} not found")
 
         elif tool_type == 'nodejs':
             js_path = os.path.join(mcp_dir, f"{tool_name}.js")
             if os.path.exists(js_path):
-                print(f"[MCP] 加载Node.js工具: {js_path}")
+                print(f"[MCP] Loading Node.js tool: {js_path}")
 
                 def node_tool_wrapper(*args, **kwargs):
-                    """执行Node.js工具的函数包装器"""
+                    """Wrapper function to execute a Node.js tool"""
                     try:
                         params = {}
                         if args: params['args'] = args
@@ -67,9 +67,9 @@ def load_tools():
                         return {"success": False, "error": str(e)}
                 
                 tools[tool_name] = node_tool_wrapper
-                print(f"[MCP] 成功加载Node.js工具: {tool_name}")
+                print(f"[MCP] Successfully loaded Node.js tool: {tool_name}")
             else:
-                print(f"[MCP] 错误: 未找到Node.js工具 {tool_name} 的实现文件")
+                print(f"[MCP] Error: Implementation file for Node.js tool {tool_name} not found")
     
-    print(f"[MCP] 已加载工具: {list(tools.keys())}")
+    print(f"[MCP] Loaded tools: {list(tools.keys())}")
     return tools

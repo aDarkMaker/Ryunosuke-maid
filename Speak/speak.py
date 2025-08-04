@@ -11,11 +11,13 @@ import torch
 # 🇧🇷 'p' => Brazilian Portuguese pt-br
 # 🇨🇳 'z' => Mandarin Chinese: pip install misaki[zh]
 pipeline = KPipeline(lang_code='z', repo_id='hexgrad/Kokoro-82M') # <= make sure lang_code matches voice, reference above.
-voice_tensor = torch.load('.\Speak\model\yln\mygf-yln.pth', weights_only=True, map_location=torch.device('cpu')) # Training!
+# voice_tensor = torch.load('.\Speak\model\yln\mygf-yln.pth', weights_only=True, map_location=torch.device('cpu')) # Training!
+# kokoro haven't push the train code……
+
 
 def speak(text, speed=1):
     generator = pipeline(
-        text, voice=voice_tensor,
+        text, voice='af_heart',
         speed=speed, split_pattern=r'\n+'
     )
     

@@ -3,3 +3,5 @@ asset
 .vscode
 __pycache__
 model_params/*
+kokoro/*
+train.py
