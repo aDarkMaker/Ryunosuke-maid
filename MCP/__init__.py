@@ -56,6 +56,8 @@ def load_tools():
                             ['node', js_path, json.dumps(params)],
                             capture_output=True,
                             text=True,
+                            encoding='utf-8', 
+                            errors='replace',  
                             timeout=10
                         )
 

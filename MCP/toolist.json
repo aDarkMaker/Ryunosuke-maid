@@ -9,7 +9,13 @@
         {
             "name": "see",
             "type": "python",
-            "description": "Ocr模块",
+            "description": "OCR",
+            "parameters": {}
+        },
+        {
+            "name": "weather",
+            "type": "nodejs",
+            "description": "天气查询模块",
             "parameters": {}
         }
     ] 

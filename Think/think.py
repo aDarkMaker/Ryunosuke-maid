@@ -46,6 +46,44 @@ def generate_reply(user_text):
                 return "查看指令已执行"
             else:
                 return "未找到查看工具"
+
+    if "天气" in user_text:
+        speak("当你感到迷茫的时候不如听听天气预报怎么说！")
+        if 'weather' in mcp_tools:
+            print("执行天气查询指令...")
+            try:
+                result = mcp_tools['weather'](userInput=user_text)
+                if result and result.get('success'):
+                    weather_response = result.get('message', '天气查询失败')
+                    print(f"天气查询结果: {weather_response}")
+                    
+                    # 语音播报天气结果
+                    system_state.pause_listening()
+                    speak(weather_response)
+                    system_state.resume_listening()
+                    
+                    return weather_response
+                else:
+                    error_msg = result.get('error', '天气查询失败') if result else '天气查询失败'
+                    print(f"天气查询失败: {error_msg}")
+                    
+                    system_state.pause_listening()
+                    speak(f"抱歉，天气查询失败了：{error_msg}")
+                    system_state.resume_listening()
+                    
+                    return f"天气查询失败: {error_msg}"
+            except Exception as e:
+                error_msg = f"天气查询异常: {str(e)}"
+                print(error_msg)
+                
+                system_state.pause_listening()
+                speak("抱歉，天气查询出现了问题")
+                system_state.resume_listening()
+                
+                return error_msg
+        else:
+            return "未找到天气查询工具"
+        
         
     
     url = "https://api.deepseek.com/v1/chat/completions"
