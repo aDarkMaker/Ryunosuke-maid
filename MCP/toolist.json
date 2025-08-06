@@ -3,7 +3,7 @@
         {
             "name": "ShutDown",
             "type": "nodejs",
-            "description": "电脑关机",
+            "description": "close your computer",
             "parameters": {}
         },
         {
@@ -15,7 +15,13 @@
         {
             "name": "weather",
             "type": "nodejs",
-            "description": "天气查询模块",
+            "description": "weather",
+            "parameters": {}
+        },
+        {
+            "name": "time",
+            "type": "nodejs",
+            "description": "time",
             "parameters": {}
         }
     ] 
