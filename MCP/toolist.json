@@ -5,6 +5,12 @@
             "type": "nodejs",
             "description": "电脑关机",
             "parameters": {}
+        },
+        {
+            "name": "see",
+            "type": "python",
+            "description": "Ocr模块",
+            "parameters": {}
         }
     ] 
 }

@@ -35,6 +35,18 @@ def generate_reply(user_text):
                 return "关机指令已执行"
             else:
                 return "未找到关机工具"
+        elif "看看" in user_text :
+            speak("别急，让我看看！")
+            if 'see' in mcp_tools:
+                print("执行查看指令...")  
+                result = mcp_tools['see']()
+                if result.get('success'):
+                    text_content = result['data']['full_text']
+                    print(f"查看结果: {text_content}")
+                return "查看指令已执行"
+            else:
+                return "未找到查看工具"
+        
     
     url = "https://api.deepseek.com/v1/chat/completions"
     headers = {
