@@ -57,7 +57,6 @@ def generate_reply(user_text):
                     weather_response = result.get('message', '天气查询失败')
                     print(f"天气查询结果: {weather_response}")
                     
-                    # 语音播报天气结果
                     system_state.pause_listening()
                     speak(weather_response)
                     system_state.resume_listening()
