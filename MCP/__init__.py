@@ -42,33 +42,42 @@ def load_tools():
 
         elif tool_type == 'nodejs':
             js_path = os.path.join(mcp_dir, f"{tool_name}.js")
+            print(f"[MCP] Looking for Node.js tool file: {js_path}")
             if os.path.exists(js_path):
-                print(f"[MCP] Loading Node.js tool: {js_path}")
+                print(f"[MCP] Loading Node.js tool: {tool_name} -> {js_path}")
 
-                def node_tool_wrapper(*args, **kwargs):
-                    """Wrapper function to execute a Node.js tool"""
-                    try:
-                        params = {}
-                        if args: params['args'] = args
-                        if kwargs: params.update(kwargs)
+                def create_node_tool_wrapper(tool_path, tool_name):
+                    def node_tool_wrapper(*args, **kwargs):
+                        """Wrapper function to execute a Node.js tool"""
+                        try:
+                            params = {}
+                            if args: params['args'] = args
+                            if kwargs: params.update(kwargs)
 
-                        result = subprocess.run(
-                            ['node', js_path, json.dumps(params)],
-                            capture_output=True,
-                            text=True,
-                            encoding='utf-8', 
-                            errors='replace',  
-                            timeout=10
-                        )
+                            print(f"[MCP] Running Node.js tool: {tool_path} with params: {params}")
+                            
+                            result = subprocess.run(
+                                ['node', tool_path, json.dumps(params)],
+                                capture_output=True,
+                                text=True,
+                                encoding='utf-8', 
+                                errors='replace',  
+                                timeout=10
+                            )
 
-                        if result.returncode == 0:
-                            return json.loads(result.stdout)
-                        else:
-                            return {"success": False, "error": result.stderr}
-                    except Exception as e:
-                        return {"success": False, "error": str(e)}
+                            print(f"[MCP] Tool {tool_name} stdout: {result.stdout}")
+                            print(f"[MCP] Tool {tool_name} stderr: {result.stderr}")
+
+                            if result.returncode == 0:
+                                return json.loads(result.stdout)
+                            else:
+                                return {"success": False, "error": result.stderr}
+                        except Exception as e:
+                            print(f"[MCP] Tool {tool_name} exception: {str(e)}")
+                            return {"success": False, "error": str(e)}
+                    return node_tool_wrapper
                 
-                tools[tool_name] = node_tool_wrapper
+                tools[tool_name] = create_node_tool_wrapper(js_path, tool_name)
                 print(f"[MCP] Successfully loaded Node.js tool: {tool_name}")
             else:
                 print(f"[MCP] Error: Implementation file for Node.js tool {tool_name} not found")

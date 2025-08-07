@@ -47,7 +47,7 @@ def generate_reply(user_text):
             else:
                 return "未找到查看工具"
 
-    if "天气" in user_text:
+    elif "天气" in user_text:
         speak("当你感到迷茫的时候不如听听天气预报怎么说！")
         if 'weather' in mcp_tools:
             print("执行天气查询指令...")
@@ -83,7 +83,7 @@ def generate_reply(user_text):
         else:
             return "未找到天气查询工具"
     
-    if "几点" in user_text or "几号" in user_text :
+    elif "几点" in user_text or "几号" in user_text :
         if 'time' in mcp_tools:
             print("执行时间查询指令...")
             result = mcp_tools['time']()
