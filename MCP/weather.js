@@ -93,12 +93,12 @@ const WEATHER_CODES = {
 
 class WeatherQuery {
     constructor() {
-        // 默认配置
+        // default
         this.uid = "";
         this.key = "";
         this.api = "https://api.seniverse.com/v3/weather/now.json";
 
-        // 读取配置文件
+        // load config
         this.loadConfig();
     }
 
@@ -125,13 +125,13 @@ class WeatherQuery {
                 }
             }
         } catch (error) {
-            console.error('[Weather] 读取配置文件失败:', error.message);
+            console.error('[Weather] failed to load config:', error.message);
         }
     }
 
     extractCityFromText(text) {
 
-        // 从用户输入中提取城市名称
+        // check city in user_text
         for (const [city, pinyin] of Object.entries(CITY_PINYIN_MAP)) {
             if (text.includes(city)) {
                 return { city, pinyin };
@@ -141,7 +141,7 @@ class WeatherQuery {
     }
 
     generateSignature(ts) {
-        // 生成API签名
+        // api signtext
         const strToSign = `ts=${ts}&uid=${this.uid}`;
         const signature = crypto.createHmac('sha1', this.key)
             .update(strToSign)
@@ -167,7 +167,7 @@ class WeatherQuery {
                         const result = JSON.parse(data);
                         resolve(result);
                     } catch (error) {
-                        console.error('[Weather] 解析JSON失败:', error);
+                        console.error('[Weather] Json failed:', error);
                         reject({
                             success: false,
                             error: '解析天气数据失败',
@@ -176,10 +176,10 @@ class WeatherQuery {
                     }
                 });
             }).on('error', (error) => {
-                console.error('[Weather] API请求失败:', error);
+                console.error('[Weather] API request failed:', error);
                 reject({
                     success: false,
-                    error: `网络请求失败: ${error.message}`
+                    error: `Internet failed: ${error.message}`
                 });
             });
         });
@@ -190,7 +190,7 @@ class WeatherQuery {
             if (weatherData.status_code && weatherData.status_code !== 0) {
                 return {
                     success: false,
-                    error: `API错误: ${weatherData.status || '未知错误'}`,
+                    error: `API failed: ${weatherData.status || 'UN'}`,
                     message: `很抱歉，无法获取${cityName}的天气信息。`
                 };
             }
@@ -198,7 +198,7 @@ class WeatherQuery {
             if (!weatherData.results || weatherData.results.length === 0) {
                 return {
                     success: false,
-                    error: '没有找到天气数据',
+                    error: 'No items',
                     message: `很抱歉，没有找到${cityName}的天气信息。`
                 };
             }
@@ -207,14 +207,14 @@ class WeatherQuery {
             const now = result.now;
             const location = result.location;
 
-            // 获取天气描述
+            // desc
             const weatherCode = parseInt(now.code);
             const weatherDesc = WEATHER_CODES[weatherCode] || now.text || '未知';
 
-            // 格式化回复 - 修复体感温度显示问题
+            // remix answer
             let message = `${location.name}现在的天气是${weatherDesc}，温度${now.temperature}度`;
 
-            // 只有当体感温度存在且不为undefined时才显示
+            // fix undefined
             if (now.feels_like && now.feels_like !== 'undefined') {
                 message += `，体感温度${now.feels_like}度`;
             }
@@ -238,10 +238,10 @@ class WeatherQuery {
                 message: message
             };
         } catch (error) {
-            console.error('[Weather] 格式化天气数据失败:', error);
+            console.error('[Weather] fix message failed:', error);
             return {
                 success: false,
-                error: `格式化数据失败: ${error.message}`,
+                error: `message failed: ${error.message}`,
                 message: `很抱歉，处理${cityName}的天气信息时出现错误。`
             };
         }
@@ -274,11 +274,11 @@ async function main() {
         console.log(JSON.stringify(result));
 
     } catch (error) {
-        console.error('[Weather] 执行失败:', error);
+        console.error('[Weather] error:', error);
         const errorResult = {
             success: false,
             error: error.message || String(error),
-            message: '很抱歉，天气查询服务暂时不可用。'
+            message: '查不了一点！'
         };
         console.log(JSON.stringify(errorResult));
     }

@@ -15,13 +15,13 @@
         {
             "name": "weather",
             "type": "nodejs",
-            "description": "weather",
+            "description": "get weather",
             "parameters": {}
         },
         {
             "name": "time",
             "type": "nodejs",
-            "description": "time",
+            "description": "get time",
             "parameters": {}
         }
     ] 

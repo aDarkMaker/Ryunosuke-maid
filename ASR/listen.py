@@ -9,11 +9,11 @@ from .control import system_state
 current_dir = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(current_dir, 'model')
 
-# 语音活动检测参数
-VAD_THRESHOLD = 0.03  # 声音检测阈值 (根据环境调整)
-SILENCE_DURATION = 1.5  # 静音持续时间(秒)判定为说话结束
+# act listen
+VAD_THRESHOLD = 0.03  # base voice
+SILENCE_DURATION = 1.5  # check over
 
-# 流式处理参数
+# set
 chunk_size = [0, 10, 5]
 encoder_chunk_look_back = 4
 decoder_chunk_look_back = 1
@@ -26,9 +26,9 @@ model = AutoModel(
 
 
 sample_rate = 16000
-chunk_stride = chunk_size[1] * 3840  # 每块采样点数
+chunk_stride = chunk_size[1] * 3840  # chunk set
 
-# 状态跟踪变量
+# is_speaking
 is_speaking = False
 last_sound_time = time.time()
 audio_buffer = []
@@ -44,7 +44,7 @@ def process_audio_buffer(is_final=False):
 
     full_audio = np.concatenate(audio_buffer)
     
-    # 调用ASR模型
+    # ASR
     res = model.generate(
         input=full_audio,
         cache=cache,
@@ -70,17 +70,17 @@ def callback(indata, frames, time_info, status):
     
     if not system_state.is_listening_active():
         return
-    # 提取单声道音频
+    # audio
     speech_chunk = indata[:, 0]
     
-    # 计算当前音频块的音量
+    # calculate volume
     current_volume = calculate_volume(speech_chunk)
     
-    # 语音活动检测
+    # check voice
     if current_volume > VAD_THRESHOLD:
         last_sound_time = time.time()
         
-        # 如果从静音状态转为说话状态
+        # turn to listen
         if not is_speaking:
             print("\一有动静...")
             is_speaking = True
@@ -89,7 +89,7 @@ def callback(indata, frames, time_info, status):
 
         process_audio_buffer(is_final=False)
     
-    # 检查是否说话结束
+    # if over
     elif is_speaking:
         silence_time = time.time() - last_sound_time
         if silence_time > SILENCE_DURATION:

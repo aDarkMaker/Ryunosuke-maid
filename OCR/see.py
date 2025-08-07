@@ -16,7 +16,7 @@ class ScreenOCR:
             det_root=model_path, 
             rec_root=model_path
         )
-    
+        
     def capture_screen(self):
         try:
             screenshot = ImageGrab.grab()
@@ -24,7 +24,7 @@ class ScreenOCR:
             screenshot_bgr = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
             return screenshot_bgr
         except Exception as e:
-            print(f"截图失败: {str(e)}")
+            print(f"failed: {str(e)}")
             return None
     
     def extract_text_with_position(self, ocr_result):
@@ -45,7 +45,7 @@ class ScreenOCR:
             if screenshot is None:
                 return {
                     'success': False,
-                    'error': '截图失败'
+                    'error': 'img failed'
                 }
                 
             with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp_file:
