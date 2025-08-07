@@ -83,7 +83,16 @@ def generate_reply(user_text):
                 return error_msg
         else:
             return "未找到天气查询工具"
-        
+    
+    if "几点" in user_text or "几号" in user_text :
+        if 'time' in mcp_tools:
+            print("执行时间查询指令...")
+            result = mcp_tools['time']()
+            if result and result.get('success'):
+                time_response = result.get('message', '时间查询失败')
+                print(f"时间查询结果: {time_response}")
+                speak(time_response)
+                return time_response  
         
     
     url = "https://api.deepseek.com/v1/chat/completions"
