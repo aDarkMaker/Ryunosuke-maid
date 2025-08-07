@@ -33,10 +33,24 @@ pip install uv
 
 ### ASR——FunASR
 
+```shell
+uv pip install funasr
+```
+
 ### TTS——Kokoro
+
+```shell
+uv pip install kokoro
+```
+
+#### Tips: If you wanto train your own model, you can git clone kokoro and train by yourself!
 
 ### MCP——工具包
 
 ### OCR——CnOcr
+
+```shell
+uv pip install cnocr
+```
 
 ### Think——思考&人设模型
