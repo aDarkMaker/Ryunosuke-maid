@@ -47,6 +47,8 @@ uv pip install kokoro
 
 ### MCP——工具包
 
+#### In MCP Folder, If wanto diy your tools, you can add a Python or Javascript file, then write the description in the toolist.json to load.
+
 ### OCR——CnOcr
 
 ```shell
@@ -54,3 +56,5 @@ uv pip install cnocr
 ```
 
 ### Think——思考&人设模型
+
+#### Now, deepseek is used as the think model, I will train a smarter one in the future.

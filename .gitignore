@@ -5,3 +5,4 @@ __pycache__
 model_params/*
 kokoro/*
 train.py
+utils.py
